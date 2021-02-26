@@ -12,7 +12,7 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer')
 const { v4: uuidv4 } = require('uuid');
 const validator = require('validator')
-
+const shortId = require('shortid')
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const storage = new CloudinaryStorage({
@@ -143,10 +143,10 @@ route.put('/profileimg', usersignin, upload.single('profileimg'), (req, res) => 
         .select('-password')
         .then(user => {
             let newpost = new Post({
-                post: '', user: user._id, image: user.profileimg, activity: 'Updated profile photo'
+                post: '',slug:shortId.generate(), user: user._id, image: [user.profileimg], activity: 'Updated profile photo'
             })
             newpost.save()
-            Post.populate(newpost, { path: "user", select: "_id first last email" })
+            Post.populate(newpost, { path: "user", select: "_id first last email profileimg" })
                 .then(post => {
                     res.status(200).json({ post, user: user })
                 })
@@ -160,10 +160,10 @@ route.put('/coverimg', usersignin, upload.single('coverimg'), (req, res) => {
         .select('-password')
         .then(user => {
             let newpost = new Post({
-                post: '', user: user._id, image: user.coverimg, activity: 'Updated cover photo'
+                post: '',slug:shortId.generate(), user: user._id, image: [user.coverimg], activity: 'Updated cover photo'
             })
             newpost.save()
-            Post.populate(newpost, { path: "user", select: "_id first last email" })
+            Post.populate(newpost, { path: "user", select: "_id first last email profileimg" })
                 .then(post => {
                     res.status(200).json({ post, user: user })
                 })
